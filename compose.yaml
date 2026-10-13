@@ -7,3 +7,6 @@ services:
     ports:
       - "5000:5000"
     restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: 0.50
