@@ -44,6 +44,29 @@ jobs:
       - name: Build Docker image
         run: docker build -t cloudops360:${{ github.sha }} .
 
+      - name: Smoke test Docker container
+        run: |
+          set -eu
+          cleanup() {
+            docker rm -f cloudops360-smoke-test >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker run -d --name cloudops360-smoke-test -p 127.0.0.1:5000:5000 cloudops360:${{ github.sha }}
+
+          for attempt in $(seq 1 15); do
+            if curl --fail --silent http://127.0.0.1:5000/health | grep -q '"status":"healthy"'; then
+              echo "Docker container health endpoint passed."
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs cloudops360-smoke-test
+          echo "Smoke test failed: health endpoint did not become healthy."
+          exit 1
+
+
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@v0.36.0
         with:
