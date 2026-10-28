@@ -38,6 +38,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate Docker Compose configuration
+        run: docker compose config -q
+
       - name: Build Docker image
         run: docker build -t cloudops360:${{ github.sha }} .
 
