@@ -50,3 +50,11 @@ build/
 # Temporary files
 *.tmp
 *.swp
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
